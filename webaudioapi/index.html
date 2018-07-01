@@ -4,9 +4,42 @@
   <title>Web Audio API</title>
   <link rel="stylesheet" type="text/css" href="css/style.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js" type="text/javascript"></script>
+
+  <script >
+    // setting file path for drum sounds // this is also the direct file path to a kick sound in your google drive folder // 
+    const audioFileUrl = 
+      'https://s3.us-east-2.amazonaws.com/drumsamples/DRH_Kick_01.wav';
+   
+    // intializing web audio api's // 
+    const context = new (window.AudioContext || window.webkitAudioContext)();
+   
+    // http request using ajax // 
+    const xhr = new XMLHttpRequest();
+   
+    // gets sample from url path // 
+    xhr.open('GET', audioFileUrl);
+
+    // using arrayBuffer to buffer samples // 
+    xhr.responseType = 'arrayBuffer';
+
+    //on loading function that loads the sample and sends the request. 
+    xhr.onload = function(){
+      
+      context.decodeAudioData(xhr.response, function(audio){
+        let buffer = context.createBufferSource(); // creating the buffer source. 
+        buffer.connect(context.destination); // this is essentially the output.
+        buffer.buffer = audio;
+        buffer.start(0); // starts at the zero entry of the array. 
+      })
+    };
+    xhr.send(); 
+
+  </script>
 </head>
 <body style="margin: 0;">
   <canvas id="screen" width="700px" height="400px">
+  
+  
  
 
 

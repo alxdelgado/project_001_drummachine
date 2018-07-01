@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Solution 2</title>
+  <link rel="stylesheet" type="text/css" href="css/style.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js" type="text/javascript"></script>
+  <script >
+    // setting file path for drum sounds // this is also the direct file path to a kick sound in your google drive folder // 
+    const audioFileUrl = 
+      'https://s3.us-east-2.amazonaws.com/drumsamples/DRH_Kick_01.wav';
+   
+    // intializing web audio api's // 
+    const context = new (window.AudioContext || window.webkitAudioContext)();
+   
+    // http request using ajax // 
+    const xhr = new XMLHttpRequest();
+   
+    // gets sample from url path // 
+    xhr.open('GET', audioFileUrl);
+
+    // using arrayBuffer to buffer samples // 
+    xhr.responseType = 'arrayBuffer';
+
+    //on loading function that loads the sample and sends the request. 
+    xhr.onload = function(){
+      
+      context.decodeAudioData(xhr.response, function(audio){
+        let buffer = context.createBufferSource(); // creating the buffer source. 
+        buffer.connect(context.destination); // this is essentially the output.
+        buffer.buffer = audio;
+        buffer.start(0); // starts at the zero entry of the array. 
+      })
+    };
+    xhr.send(); 
+  </script>
+  <script>
+    // DRUM CLASS 
+
+    // Create a new drum instance 
+    const Drum = function(){}; 
+
+    // Load the sample for the drum 
+    // Takes a URL and a callback function
+    // Calls callback function when ready 
+    Drum.prototype.load = function(url, done) {
+      let drum = this; // Use this for step 3 below. 
+
+      // (1) Make an HTTP request and GET the contents of the 'url' as audio. 
+      // (2) Decode the response as audio. 
+      // (3) Store the response under the 'drum.audio'. 
+      // (4) Call 'done' to let the drum machine know its ready to be played. 
+
+      // (1)
+      let xhr = new XMLHttpRequest();
+      xhr.open('GET', url); 
+      xhr.responseType = 'arrayBuffer';
+      xhr.onload = function(){
+        context.decodeAudioData(xhr.response, function(audio){
+          drum.audio = audio;
+          done();
+        });
+      };
+    };
+    xhr.send();
+
+    // Plays the drum's sample. 
+    Drum.prototype.play = function(){
+      // (5) Create a new audio buffer source. 
+      // (6) Connect the buffer to the audio output. 
+      // (7) Set the buffer to use the given audio. 
+      // (8) Play the buffer. 
+      const buffer = context.createBufferSource();
+      buffer.connect(context.destination); 
+      biffer.buffer = this.audio;
+      buffer.start(0);
+    }:
+
+  </script>
+  <script src="clock.js"></script>
+  <script src="drum_machine.js"></script>
+  <script>
+
+  // INTIALIZATION 
+
+  const clock = new Clock({
+    numBeats: 16;
+    tempo: 32 * 4; 
+    // This is the time structure 
+  });
+    
+  const drumMachine = new DrumMachine({
+    clock: clock,
+    basePath: 'https://s3.us-east-2.amazonaws.com/drumsamples/',
+    instruments: {
+      kick: 'DRH_Kick_01.wav',
+      clap: 'DRH_Clap_01.wav',
+      tom1: 'DRH_Tom_01.wav',  
+      tom2: 'DRH_Tom_02.wav',
+      tom3: 'DRH_Tom_03.wav',
+      clhat: 'DRH_CHat_01.wav',
+      ophat: 'DRH_OHat_01.wav',
+      rim: 'DRH_Rim_01.wav', 
+      snare: 'DRH_Snare_03.wav',
+
+    },
+    pattern: {
+      kick: 'x    x    x    x    x    x    x    x'
+      clap: '     x         x         x         x' 
+
+    }
+
+  });
+
+
+  </script>
+
+
+</head>
+<body>
+
+
+
+
+  <script src="js/app.js" type="text/javascript"></script>
+</body>
+</html>
